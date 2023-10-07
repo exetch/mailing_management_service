@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "mailing-management-service"
+version = "0.1.0"
+description = ""
+authors = ["exetch <gassemark@gmail.com>"]
+readme = "README.md"
+packages = [{include = "mailing_management_service"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^4.2.6"
+pillow = "9.5.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
