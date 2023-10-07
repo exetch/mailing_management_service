@@ -10,6 +10,7 @@ packages = [{include = "mailing_management_service"}]
 python = "^3.11"
 django = "^4.2.6"
 pillow = "9.5.0"
+psycopg2 = "^2.9.9"
 
 
 [build-system]
