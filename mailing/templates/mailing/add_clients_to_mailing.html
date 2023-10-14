@@ -1,0 +1,30 @@
+{% extends 'mailing/base.html' %}
+
+{% block content %}
+<form method="post" action="{% url 'add_clients_to_mailing' mailing_id %}">
+    {% csrf_token %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Клиент</th>
+                <th>Выбрать</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in clients %}
+                <tr>
+                    <td>{{ client.id }}</td>
+                    <td>{{ client.email }}</td>
+                    <td>{{ client.full_name }}</td>
+                    <td>
+                        <input type="checkbox" name="clients" value="{{ client.id }}">
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit">Сохранить выбранных клиентов</button>
+</form>
+{% endblock %}
