@@ -1,0 +1,35 @@
+{% extends 'mailing/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Список логов</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Рассылка</th>
+                <th>Клиент</th>
+                <th>Дата и время отправки</th>
+                <th>Статус</th>
+                <th>Ответ сервера</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.id }}</td>
+                <td>{{ log.mailing }}</td>
+                <td>{{ log.client }}</td>
+                <td>{{ log.sent_datetime }}</td>
+                <td>{{ log.status }}</td>
+                <td>{{ log.server_response }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">Нет доступных логов.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

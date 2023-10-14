@@ -1,0 +1,24 @@
+{% extends 'mailing/base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col">
+        {% if object %}
+            <h1>Обновить рассылку</h1>
+        {% else %}
+            <h1>Создать рассылку</h1>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">
+                {% if object %}
+                    Обновить
+                {% else %}
+                    Далее
+                {% endif %}
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
