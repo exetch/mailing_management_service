@@ -2,6 +2,11 @@
 
 {% block content %}
 <div class="container mt-5">
+    <h1>Выберите клиентов в эту рассылку</h1>
+    <form method="get">
+        <input type="text" name="search" placeholder="Поиск...">
+        <button type="submit">Поиск</button>
+    </form>
     <form method="post" action="{% url 'add_clients_to_mailing' mailing_id %}">
         {% csrf_token %}
         <table class="table table-striped">
@@ -20,7 +25,8 @@
                         <td>{{ client.email }}</td>
                         <td>{{ client.full_name }}</td>
                         <td>
-                            <input type="checkbox" name="clients" value="{{ client.id }}">
+                            <input type="checkbox" name="clients" value="{{ client.id }}"
+                                   {% if client in selected_clients %} checked {% endif %}>
                         </td>
                     </tr>
                 {% endfor %}

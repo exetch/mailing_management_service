@@ -14,10 +14,12 @@ class Mailing(models.Model):
         ('started', 'Запущена'),
         ('completed', 'Завершена'),
     )
+    start_date = models.DateTimeField(verbose_name="Дата начала рассылки", null=True, blank=True)
+    end_date = models.DateTimeField(verbose_name="Дата окончания рассылки", null=True, blank=True)
     send_time = models.TimeField(verbose_name="Время рассылки")
     send_frequency = models.CharField(max_length=10, choices=SEND_CHOICES, verbose_name="Частота рассылки")
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='created', verbose_name="Статус рассылки")
-    clients = models.ManyToManyField(Client, verbose_name="Клиенты", related_name="mailings", **NULLABLE)
+    clients = models.ManyToManyField(Client, verbose_name="Клиенты", related_name="mailings")
 
     def __str__(self):
         return f"{self.send_time} {self.send_frequency}"

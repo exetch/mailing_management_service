@@ -22,9 +22,12 @@
                 <td>{{ client.full_name }}</td>
                 <td>{{ client.comment }}</td>
                 <td>
-                    <a class="btn btn-info btn-sm" href="{% url 'client_update' client.pk %}">Редактировать</a>
-                    <a class="btn btn-danger btn-sm" href="{% url 'client_delete' client.pk %}">Удалить</a>
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'client_update' client.pk %}" class="btn btn-primary">Редактировать</a>
+                        <a href="{% url 'client_delete' client.pk %}" class="btn btn-danger">Удалить</a>
+                    </div>
                 </td>
+
             </tr>
             {% empty %}
             <tr>

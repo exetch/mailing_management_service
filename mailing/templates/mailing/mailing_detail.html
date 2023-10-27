@@ -1,0 +1,25 @@
+{% extends 'mailing/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Детали рассылки</h1>
+    <p><strong>ID:</strong> {{ mailing.id }}</p>
+    <p><strong>Время рассылки:</strong> {{ mailing.send_time }}</p>
+    <p><strong>Периодичность:</strong> {{ mailing.send_frequency }}</p>
+    <p><strong>Статус:</strong> {{ mailing.status }}</p>
+    <p><strong>Дата начала:</strong> {{ mailing.start_date }}</p>
+    <p><strong>Дата окончания:</strong> {{ mailing.end_date }}</p>
+    <p><strong>Клиенты:</strong>
+        {% for client in mailing.clients.all %}
+            {{ client.full_name }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </p>
+
+    <div class="btn-group mt-3" role="group">
+        <a href="{% url 'mailing_update' mailing.pk %}" class="btn btn-primary">Обновить</a>
+        <a href="{% url 'mailing_delete' mailing.pk %}" class="btn btn-danger">Удалить</a>
+        <a href="{% url 'message_update' message.pk %}" class="btn btn-info">Редактировать сообщение</a>
+        <a href="{% url 'add_clients_to_mailing' mailing.pk %}" class="btn btn-warning">Изменить список получателей</a>
+    </div>
+</div>
+{% endblock %}
