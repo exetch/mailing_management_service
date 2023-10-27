@@ -1,30 +1,38 @@
 {% extends 'mailing/base.html' %}
 
 {% block content %}
-<form method="post" action="{% url 'add_clients_to_mailing' mailing_id %}">
-    {% csrf_token %}
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Email</th>
-                <th>Клиент</th>
-                <th>Выбрать</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for client in clients %}
+<div class="container mt-5">
+    <h1>Выберите клиентов в эту рассылку</h1>
+    <form method="get">
+        <input type="text" name="search" placeholder="Поиск...">
+        <button type="submit">Поиск</button>
+    </form>
+    <form method="post" action="{% url 'add_clients_to_mailing' mailing_id %}">
+        {% csrf_token %}
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <td>{{ client.id }}</td>
-                    <td>{{ client.email }}</td>
-                    <td>{{ client.full_name }}</td>
-                    <td>
-                        <input type="checkbox" name="clients" value="{{ client.id }}">
-                    </td>
+                    <th>ID</th>
+                    <th>Email</th>
+                    <th>Клиент</th>
+                    <th>Выбрать</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <button type="submit">Сохранить выбранных клиентов</button>
-</form>
+            </thead>
+            <tbody>
+                {% for client in clients %}
+                    <tr>
+                        <td>{{ client.id }}</td>
+                        <td>{{ client.email }}</td>
+                        <td>{{ client.full_name }}</td>
+                        <td>
+                            <input type="checkbox" name="clients" value="{{ client.id }}"
+                                   {% if client in selected_clients %} checked {% endif %}>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary">Сохранить рассылку</button>
+    </form>
+</div>
 {% endblock %}

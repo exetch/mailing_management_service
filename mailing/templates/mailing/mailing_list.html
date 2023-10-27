@@ -22,8 +22,7 @@
                 <td>{{ mailing.send_frequency }}</td>
                 <td>{{ mailing.status }}</td>
                 <td>
-                    <a href="{% url 'mailing_update' mailing.pk %}" class="btn btn-primary">Обновить</a>
-                    <a href="{% url 'mailing_delete' mailing.pk %}" class="btn btn-danger">Удалить</a>
+                    <a href="{% url 'mailing_detail' mailing.pk %}" class="btn btn-primary">Подробно</a>
                 </td>
             </tr>
             {% empty %}
