@@ -136,18 +136,3 @@ def resend_failed_emails() -> None:
                 log_email_status(mailing, client, status, server_response)
         except MailingLog.DoesNotExist:
             continue
-
-
-def run_mailing() -> None:
-    """
-    Запускает задачу отправки электронных писем и устанавливает расписание.
-    Отправляет электронные письма через заданное количество минут.
-    Ожидает заданное количество секунд между проверками расписания.
-    """
-    send_emails()
-    schedule.every(1).minutes.do(send_emails)
-
-    while True:
-        schedule.run_pending()
-        time.sleep(20)
-

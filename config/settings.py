@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "mailing",
     "clients",
     "logs",
+    "users"
 ]
 
 MIDDLEWARE = [
@@ -151,3 +152,15 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
 EMAIL_ADMIN = EMAIL_HOST_USER
 
+AUTH_USER_MODEL = 'users.CustomUser'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = 'login'
+
+CACHE_ENABLED = True
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": 'redis://127.0.0.1:6379',
+    }
+}

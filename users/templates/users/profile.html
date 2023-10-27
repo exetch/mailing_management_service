@@ -1,0 +1,59 @@
+{% extends "mailing/base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <h2 class="profile-title">Мой профиль</h2>
+        {% if user.avatar %}
+            <img src="{{ user.avatar.url }}" alt="Avatar" class="profile-avatar">
+        {% else %}
+            <p class="no-avatar">Изображение отсутствует</p>
+        {% endif %}
+        <ul class="profile-details">
+            <li><strong>Email:</strong> {{ user.email }}</li>
+            <li><strong>Имя:</strong> {{ user.first_name }}</li>
+            <li><strong>Фамилия:</strong> {{ user.last_name }}</li>
+            <li><strong>Телефон:</strong> {{ user.phone_number }}</li>
+            <li><strong>Страна:</strong> {{ user.country }}</li>
+        </ul>
+        <a href="{% url 'edit_profile' user.pk %}" class="btn btn-primary edit-profile-button">Редактировать профиль</a>
+    </div>
+</div>
+
+<style>
+    .profile-title {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .profile-avatar {
+        max-width: 100px;
+        max-height: 100px;
+        border-radius: 50%;
+        margin-bottom: 20px;
+    }
+
+    .no-avatar {
+        font-size: 16px;
+        color: #999;
+        margin-bottom: 20px;
+    }
+
+    .profile-details {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .profile-details li {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .edit-profile-button {
+        margin-top: 20px;
+    }
+</style>
+{% endblock %}
+
+

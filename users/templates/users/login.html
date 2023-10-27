@@ -1,0 +1,18 @@
+{% extends "mailing/base.html" %}
+
+{% block title %}Вход - Skystore{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <h2>Вход</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Войти</button>
+        </form>
+        <!-- Добавляем текст-ссылку "Забыли пароль?" -->
+        <p><a href="{% url 'password_reset' %}">Забыли пароль?</a></p>
+    </div>
+</div>
+{% endblock %}
