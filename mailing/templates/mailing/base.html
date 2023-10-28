@@ -18,7 +18,13 @@
             <ul class="navbar-nav">
                 {% if user.is_authenticated %}
                     <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'mailing_list' %}">Главная <span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="{% url 'blog_post_list' %}">Главная <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'blog_post_create' %}">Добавить статью</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'mailing_list' %}">Рассылки</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'clients_list' %}">Список клиентов</a>

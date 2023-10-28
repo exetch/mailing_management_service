@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.MailingListView.as_view(), name='mailing_list'),
+    path('mailings/', views.MailingListView.as_view(), name='mailing_list'),
     path('mailing/<int:pk>/', views.MailingDetailView.as_view(), name='mailing_detail'),
     path('mailing/create/', views.MailingCreateView.as_view(), name='mailing_create'),
     path('mailing/<int:pk>/update/', views.MailingUpdateView.as_view(), name='mailing_update'),

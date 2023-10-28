@@ -1,0 +1,11 @@
+{% extends 'mailing/base.html' %}
+
+{% block content %}
+  <h1>{% if form.instance.pk %}Редактировать запись{% else %}Создать запись{% endif %}</h1>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+  </form>
+  <a href="{% url 'blog_post_list' %}">Вернуться к списку записей</a>
+{% endblock %}
