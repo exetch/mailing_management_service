@@ -1,0 +1,12 @@
+{% extends 'mailing/base.html' %}
+
+{% block content %}
+  <h1>{{ post.title }}</h1>
+  <img src="{{ post.preview.url }}" alt="{{ post.title }}" class="img-fluid">
+  <p>{{ post.content }}</p>
+  <p>Дата создания: {{ post.date_created }}</p>
+  <p>Количество просмотров: {{ post.views }}</p>
+
+  <a href="{% url 'blog_post_update' post.slug %}" class="btn btn-primary">Редактировать</a>
+  <a href="{% url 'blog_post_delete' post.slug %}" class="btn btn-danger">Удалить</a>
+{% endblock %}

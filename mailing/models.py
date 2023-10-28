@@ -1,5 +1,6 @@
 from django.db import models
 from clients.models import Client
+from config import settings
 
 NULLABLE = {'null': True, 'blank': True}
 
@@ -20,7 +21,7 @@ class Mailing(models.Model):
     send_frequency = models.CharField(max_length=10, choices=SEND_CHOICES, verbose_name="Частота рассылки")
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='created', verbose_name="Статус рассылки")
     clients = models.ManyToManyField(Client, verbose_name="Клиенты", related_name="mailings")
-
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Пользователь")
     def __str__(self):
         return f"{self.send_time} {self.send_frequency}"
 
