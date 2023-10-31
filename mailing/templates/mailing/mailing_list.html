@@ -1,9 +1,11 @@
 {% extends 'mailing/base.html' %}
-
+{% load custom_tags %}
 {% block content %}
 <div class="container mt-5">
     <h1>Список рассылок</h1>
-    <a href="{% url 'mailing_create' %}" class="btn btn-primary">Добавить рассылку</a>
+    {% if not user|is_manager %}
+        <a href="{% url 'mailing_create' %}" class="btn btn-primary">Добавить рассылку</a>
+    {% endif %}
     <table class="table table-striped">
         <thead>
             <tr>

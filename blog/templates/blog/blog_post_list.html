@@ -1,7 +1,18 @@
 {% extends 'mailing/base.html' %}
+{% load custom_tags %}
 
 {% block content %}
   <h1>Последние новости</h1>
+    {% if user|is_manager %}
+      <a href="{% url 'blog_post_create' %}" class="btn btn-primary mb-3">Добавить новость</a>
+    {% endif %}
+    {% if user.is_authenticated %}
+      <div>
+        <p>Всего рассылок: {{ total_mailings }}</p>
+        <p>Активных рассылок: {{ active_mailings }}</p>
+        <p>Уникальных клиентов: {{ unique_clients }}</p>
+      </div>
+    {% endif %}
   <ul class="list-group">
     {% for post in object_list %}
       <li class="list-group-item">

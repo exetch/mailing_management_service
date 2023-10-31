@@ -1,0 +1,31 @@
+{% extends 'mailing/base.html' %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h1>Список пользователей</h1>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Имя пользователя</th>
+          <th>Email</th>
+          <th>Доступ</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in object_list %}
+          <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.first_name }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+              <a href="{% url 'toggle_user_status' user.id %}" class="btn btn-{{ user.is_active|yesno:"danger,success" }}">
+                {{ user.is_active|yesno:"Заблокировать,Разблокировать" }}
+              </a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

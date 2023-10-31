@@ -1,19 +1,19 @@
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, models
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy, reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.views.generic import UpdateView, DetailView, FormView
+from django.views.generic import UpdateView, DetailView, FormView, ListView
 from .forms import CustomUserLoginForm, ProfileEditForm, CustomUserRegistrationForm
 from .models import CustomUser
 from django.contrib.auth.views import LoginView, LogoutView, PasswordResetDoneView, PasswordResetCompleteView
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 class CustomLoginView(LoginView):
     template_name = 'users/login.html'
@@ -59,6 +59,10 @@ class UserRegistrationView(FormView):
         user = form.save(commit=False)
         user.email_verificated = False
         user.save()
+        group = models.Group.objects.get(name='Обычный пользователь')
+        user.groups.add(group)
+        user.save()
+
 
         # Отправляем письмо для подтверждения почты
         current_site = get_current_site(self.request)
@@ -107,3 +111,20 @@ class PasswordResetDoneView(PasswordResetDoneView):
 
 class PasswordResetCompleteView(PasswordResetCompleteView):
     template_name = 'users/password_reset_complete.html'  # Шаблон уведомления о сбросе пароля
+
+class UsersListView(PermissionRequiredMixin, ListView):
+    permission_required = 'users.view_customuser'
+    model = CustomUser
+    template_name = 'users/users_list.html'
+
+    def get_queryset(self):
+        group = models.Group.objects.get(name='Обычный пользователь')
+
+        return CustomUser.objects.filter(groups=group)
+
+
+def toggle_user_active_status(request, pk):
+    user = get_object_or_404(CustomUser, pk=pk)
+    user.is_active = not user.is_active
+    user.save()
+    return redirect('users_list')

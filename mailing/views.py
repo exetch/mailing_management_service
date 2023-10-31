@@ -1,13 +1,15 @@
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import Http404
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView, DetailView
 from django.urls import reverse_lazy
-
+from django.contrib import messages
 from .forms import MailingForm, MessageForm
 from .models import Mailing, Message
 from clients.models import Client
 from django.shortcuts import redirect, get_object_or_404
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+
 
 class MailingListView(LoginRequiredMixin, ListView):
     model = Mailing
@@ -15,7 +17,12 @@ class MailingListView(LoginRequiredMixin, ListView):
     context_object_name = 'mailings'
 
     def get_queryset(self):
-        return super().get_queryset().filter(user=self.request.user)
+        user = self.request.user
+        if user.groups.filter(name='Менеджер').exists():
+            return super().get_queryset()  # Вернуть все рассылки для менеджера
+        else:
+            return super().get_queryset().filter(user=user)
+
 
 class MailingDetailView(LoginRequiredMixin, DetailView):
     model = Mailing
@@ -28,7 +35,9 @@ class MailingDetailView(LoginRequiredMixin, DetailView):
         context['message'] = Message.objects.get(mailing=mailing)
         return context
 
-class MailingCreateView(LoginRequiredMixin, CreateView):
+
+class MailingCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = 'mailing.add_mailing'
     model = Mailing
     template_name = 'mailing/mailing_form.html'
     form_class = MailingForm
@@ -42,7 +51,9 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
         self.request.session['mailing_id'] = mailing.id
         return super().form_valid(form)
 
-class MailingUpdateView(UpdateView):
+
+class MailingUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = 'mailing.change_mailing'
     model = Mailing
     template_name = 'mailing/mailing_form.html'
     form_class = MailingForm
@@ -51,9 +62,6 @@ class MailingUpdateView(UpdateView):
         return super().get_queryset().filter(user=self.request.user)
 
     def dispatch(self, request, *args, **kwargs):
-        """
-        Переопределение метода dispatch для проверки, имеет ли пользователь право редактировать эту рассылку.
-        """
         obj = self.get_object()
         if obj.user != self.request.user:
             raise Http404("Вы не имеете права редактировать эту рассылку.")
@@ -62,7 +70,9 @@ class MailingUpdateView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('mailing_detail', kwargs={'pk': self.object.id})
 
-class MailingDeleteView(LoginRequiredMixin, DeleteView):
+
+class MailingDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'mailing.delete_mailing'
     model = Mailing
     template_name = 'mailing/mailing_confirm_delete.html'
     success_url = reverse_lazy('mailing_list')
@@ -71,7 +81,8 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
         return super().get_queryset().filter(user=self.request.user)
 
 
-class MessageCreateView(LoginRequiredMixin, CreateView):
+class MessageCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = 'mailing.add_message'
     model = Message
     template_name = 'mailing/message_form.html'
     form_class = MessageForm
@@ -83,18 +94,21 @@ class MessageCreateView(LoginRequiredMixin, CreateView):
             form.instance.mailing = mailing
         mailing.save()
         mailing_id = mailing.id
-
+        self.request.session['current_stage'] = 'add_clients'
         self.success_url = reverse_lazy('add_clients_to_mailing', kwargs={'pk': mailing_id})
 
         return super().form_valid(form)
 
-class MessageUpdateView(UpdateView):
+
+class MessageUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = 'mailing.change_message'
     model = Message
     template_name = 'mailing/message_form.html'
     form_class = MessageForm
 
     def get_queryset(self):
         return super().get_queryset().filter(mailing__user=self.request.user)
+
     def form_valid(self, form):
         mailing = self.object.mailing
 
@@ -102,7 +116,9 @@ class MessageUpdateView(UpdateView):
 
         return super().form_valid(form)
 
-class MessageDeleteView(DeleteView):
+
+class MessageDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'mailing.delete_message'
     model = Message
     template_name = 'mailing/message_confirm_delete.html'
     success_url = reverse_lazy('message_list')
@@ -111,7 +127,8 @@ class MessageDeleteView(DeleteView):
         return super().get_queryset().filter(mailing__user=self.request.user)
 
 
-class AddClientsToMailingView(TemplateView):
+class AddClientsToMailingView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    permission_required = 'mailing.change_mailing'
     template_name = 'mailing/add_clients_to_mailing.html'
 
     def get_context_data(self, **kwargs):
@@ -144,3 +161,15 @@ class AddClientsToMailingView(TemplateView):
         return redirect('mailing_list')
 
 
+@login_required
+def complete_mailing(request, pk):
+    mailing = get_object_or_404(Mailing, pk=pk)
+
+    if request.user.groups.filter(name='Менеджер').exists():
+        mailing.status = 'completed'
+        mailing.save()
+        messages.success(request, 'Рассылка завершена.')
+    else:
+        messages.error(request, 'У вас нет прав на выполнение этой операции.')
+
+    return redirect(reverse_lazy('mailing_detail', args=[pk]))

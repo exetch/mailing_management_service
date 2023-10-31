@@ -1,4 +1,4 @@
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Client
@@ -21,7 +21,13 @@ class ClientsCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        return super(ClientsCreateView, self).form_valid(form)
+        response = super(ClientsCreateView, self).form_valid(form)
+
+        next_url = self.request.GET.get('next')
+        if next_url:
+            return HttpResponseRedirect(next_url)
+
+        return response
 
 class ClientsUpdateView(LoginRequiredMixin, UpdateView):
     model = Client
