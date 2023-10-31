@@ -1,4 +1,5 @@
 {% extends 'mailing/base.html' %}
+{% load custom_tags %}
 
 {% block content %}
   <h1>{{ post.title }}</h1>
@@ -7,6 +8,8 @@
   <p>Дата создания: {{ post.date_created }}</p>
   <p>Количество просмотров: {{ post.views }}</p>
 
-  <a href="{% url 'blog_post_update' post.slug %}" class="btn btn-primary">Редактировать</a>
-  <a href="{% url 'blog_post_delete' post.slug %}" class="btn btn-danger">Удалить</a>
+  {% if user|is_manager %}
+    <a href="{% url 'blog_post_update' post.slug %}" class="btn btn-primary">Редактировать</a>
+    <a href="{% url 'blog_post_delete' post.slug %}" class="btn btn-danger">Удалить</a>
+  {% endif %}
 {% endblock %}

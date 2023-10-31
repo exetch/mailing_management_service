@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,21 +21,27 @@
                     <li class="nav-item active">
                         <a class="nav-link" href="{% url 'blog_post_list' %}">Главная <span class="sr-only">(current)</span></a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'blog_post_create' %}">Добавить статью</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'mailing_list' %}">Рассылки</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'clients_list' %}">Список клиентов</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'log_list' %}">Посмотреть логи</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Выйти</a>
-                    </li>
+                    {% if user|is_manager %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'users_list' %}">Пользователи</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'mailing_list' %}">Рассылки</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'mailing_list' %}">Мои рассылки</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'clients_list' %}">Мои клиенты</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'log_list' %}">Посмотреть логи</a>
+                        </li>
+                    {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">Выйти</a>
+                </li>
                 {% else %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'login' %}">Войти</a>

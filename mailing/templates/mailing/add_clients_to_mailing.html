@@ -3,6 +3,7 @@
 {% block content %}
 <div class="container mt-5">
     <h1>Выберите клиентов в эту рассылку</h1>
+    <a href="{% url 'client_form' %}?next={{ request.path }}" class="btn btn-primary">Добавить нового клиента</a>
     <form method="get">
         <input type="text" name="search" placeholder="Поиск...">
         <button type="submit">Поиск</button>

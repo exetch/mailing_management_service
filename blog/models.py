@@ -3,7 +3,7 @@ from django.urls import reverse
 
 class BlogPost(models.Model):
     title = models.CharField(max_length=200, verbose_name="Заголовок")
-    slug = models.CharField(max_length=200, verbose_name="Slug", null=True, blank=True)
+    slug = models.CharField(max_length=200, verbose_name="Slug", null=True, blank=True, unique=True)
     content = models.TextField(verbose_name="Содержимое")
     preview = models.ImageField(upload_to='blog_previews/', verbose_name="Превью (изображение)")
     date_created = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
