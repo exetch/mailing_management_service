@@ -9,6 +9,7 @@ from .models import Mailing, Message
 from clients.models import Client
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.cache import cache
 
 
 class MailingListView(LoginRequiredMixin, ListView):
@@ -18,10 +19,21 @@ class MailingListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         user = self.request.user
-        if user.groups.filter(name='Менеджер').exists():
-            return super().get_queryset()  # Вернуть все рассылки для менеджера
+
+        cache_key = f'mailings_for_user_{user.id}'
+
+        cached_queryset = cache.get(cache_key)
+
+        if cached_queryset is not None:
+            return cached_queryset
         else:
-            return super().get_queryset().filter(user=user)
+            if user.groups.filter(name='Менеджер').exists():
+                queryset = super().get_queryset()
+            else:
+                queryset = super().get_queryset().filter(user=user)
+            cache.set(cache_key, queryset, 60)
+
+            return queryset
 
 
 class MailingDetailView(LoginRequiredMixin, DetailView):
@@ -60,12 +72,6 @@ class MailingUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
 
     def get_queryset(self):
         return super().get_queryset().filter(user=self.request.user)
-
-    def dispatch(self, request, *args, **kwargs):
-        obj = self.get_object()
-        if obj.user != self.request.user:
-            raise Http404("Вы не имеете права редактировать эту рассылку.")
-        return super(MailingUpdateView, self).dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse_lazy('mailing_detail', kwargs={'pk': self.object.id})
@@ -115,16 +121,6 @@ class MessageUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
         self.success_url = reverse_lazy('mailing_detail', kwargs={'pk': mailing.id})
 
         return super().form_valid(form)
-
-
-class MessageDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
-    permission_required = 'mailing.delete_message'
-    model = Message
-    template_name = 'mailing/message_confirm_delete.html'
-    success_url = reverse_lazy('message_list')
-
-    def get_queryset(self):
-        return super().get_queryset().filter(mailing__user=self.request.user)
 
 
 class AddClientsToMailingView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
