@@ -1,48 +1,51 @@
 {% extends 'mailing/base.html' %}
 
 {% block content %}
-<div class="row">
-    <div class="col">
-        {% if object %}
-            <h1>Обновить рассылку</h1>
-        {% else %}
-            <h1>Создать рассылку</h1>
-        {% endif %}
-        <form method="post">
-            {% csrf_token %}
-
-<div class="row">
-    <div class="col-md-6">
-        <div class="form-group">
-            {{ form.start_date.label_tag }}
-            {{ form.start_date }}
-        </div>
-        <div class="form-group">
-            {{ form.end_date.label_tag }}
-            {{ form.end_date }}
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col text-center">
+            <h1>{% if object %}Обновить рассылку{% else %}Создать рассылку{% endif %}</h1>
         </div>
     </div>
-
-    <!-- Right Column -->
-    <div class="col-md-6">
-        <div class="form-group">
-            {{ form.send_frequency.label_tag }}
-            {{ form.send_frequency }}
+    <div class="row">
+        <div class="col">
+            <form method="post" class="card">
+                {% csrf_token %}
+                <div class="card-body">
+                    <div class="form-row">
+                        <!-- Левая колонка для дат -->
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                {{ form.start_date.label_tag }}
+                                {{ form.start_date }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.end_date.label_tag }}
+                                {{ form.end_date }}
+                            </div>
+                        </div>
+                        <!-- Правая колонка для времени, частоты и статуса -->
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                {{ form.send_frequency.label_tag }}
+                                {{ form.send_frequency }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.send_time.label_tag }}
+                                {{ form.send_time }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.status.label_tag }}
+                                {{ form.status }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-right">
+                    <button type="submit" class="btn btn-primary">Далее</button>
+                </div>
+            </form>
         </div>
-        <div class="form-group">
-            {{ form.send_time.label_tag }}
-            {{ form.send_time }}
-        </div>
-        <div class="form-group">
-            {{ form.status.label_tag }}
-            {{ form.status }}
-        </div>
-    </div>
-</div>
-
-            <button type="submit" class="btn btn-primary">Далее
-            </button>
-        </form>
     </div>
 </div>
 {% endblock %}

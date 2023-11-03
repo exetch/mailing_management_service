@@ -74,19 +74,6 @@ class BlogPostDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'post'
     slug_url_kwarg = 'slug'
 
-    def get_object(self, queryset=None):
-        slug = self.kwargs.get(self.slug_url_kwarg)
-        cache_key = f'blog_post_{slug}'
-
-        cached_data = cache.get(cache_key)
-
-        if cached_data is not None:
-            return cached_data
-
-        obj = super().get_object(queryset)
-        cache.set(cache_key, obj, 60)
-
-        return obj
     def get(self, request, *args, **kwargs):
         post = self.get_object()
         post.increment_views()

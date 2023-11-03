@@ -4,7 +4,6 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Client
 from .forms import ClientForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.core.cache import cache
 
 class ClientsListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     permission_required = 'clients.view_client'
@@ -13,18 +12,7 @@ class ClientsListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     context_object_name = 'clients'
 
     def get_queryset(self):
-        user_id = self.request.user.id
-        cache_key = f'filtered_clients_{user_id}'
-
-        cached_data = cache.get(cache_key)
-
-        if cached_data is not None:
-            return cached_data
-
         queryset = super().get_queryset().filter(user=self.request.user)
-
-        cache.set(cache_key, queryset, 60)
-
         return queryset
 
 class ClientsCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):

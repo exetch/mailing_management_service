@@ -1,15 +1,22 @@
 {% extends 'mailing/base.html' %}
 {% load custom_tags %}
-
+{% load static %}
 {% block content %}
-  <h1>{{ post.title }}</h1>
-  <img src="{{ post.preview.url }}" alt="{{ post.title }}" class="img-fluid">
-  <p>{{ post.content }}</p>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>{{ post.title }}</h1>
+    {% if user|is_manager %}
+      <div>
+        <a href="{% url 'blog_post_update' post.slug %}" class="btn btn-light" data-toggle="tooltip" data-placement="top" title="Редактировать">
+            <img src="{% static 'images/edit_icon.png' %}" alt="редактировать" style="width: 30px; height: 30px;">
+        </a>
+        <a href="{% url 'blog_post_delete' post.slug %}" class="btn btn-light" data-toggle="tooltip" data-placement="top" title="Удалить">
+            <img src="{% static 'images/delete_icon.png' %}" alt="Удалить" style="width: 30px; height: 30px;">
+        </a>
+      </div>
+    {% endif %}
+  </div>
   <p>Дата создания: {{ post.date_created }}</p>
   <p>Количество просмотров: {{ post.views }}</p>
-
-  {% if user|is_manager %}
-    <a href="{% url 'blog_post_update' post.slug %}" class="btn btn-primary">Редактировать</a>
-    <a href="{% url 'blog_post_delete' post.slug %}" class="btn btn-danger">Удалить</a>
-  {% endif %}
+  <img src="{{ post.preview.url }}" alt="{{ post.title }}" class="img-fluid">
+  <p>{{ post.content }}</p>
 {% endblock %}

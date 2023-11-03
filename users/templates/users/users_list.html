@@ -1,10 +1,19 @@
 {% extends 'mailing/base.html' %}
+{% load static %}
 
 {% block content %}
   <div class="container mt-5">
     <h1>Список пользователей</h1>
-    <table class="table table-striped">
-      <thead>
+    <form method="get" class="mb-3">
+      <div class="input-group">
+        <input type="text" class="form-control" name="query" placeholder="Поиск по имени или почте...">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="submit">Поиск</button>
+        </div>
+      </div>
+    </form>
+    <table class="table table-secondary table-hover">
+      <thead class="thead-dark">
         <tr>
           <th>ID</th>
           <th>Имя пользователя</th>
@@ -19,8 +28,12 @@
             <td>{{ user.first_name }}</td>
             <td>{{ user.email }}</td>
             <td>
-              <a href="{% url 'toggle_user_status' user.id %}" class="btn btn-{{ user.is_active|yesno:"danger,success" }}">
-                {{ user.is_active|yesno:"Заблокировать,Разблокировать" }}
+              <a href="{% url 'toggle_user_status' user.id %}" class="btn btn-{{ user.is_active|yesno:'light,light' }}" data-toggle="tooltip" data-placement="top" title="{{ user.is_active|yesno:'Забанить к хуям!!!,понять и простить' }}">
+                {% if user.is_active %}
+                  <img src="{% static 'images/ban_icon.png' %}" alt="Блокировать" style="width: 30px; height: 30px;">
+                {% else %}
+                  <img src="{% static 'images/unban_icon.png' %}" alt="Разблокировать" style="width: 30px; height: 30px;">
+                {% endif %}
               </a>
             </td>
           </tr>
@@ -29,3 +42,4 @@
     </table>
   </div>
 {% endblock %}
+

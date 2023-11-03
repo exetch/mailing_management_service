@@ -1,11 +1,15 @@
 {% extends 'mailing/base.html' %}
-
+{% load static %}
 {% block content %}
 <div class="container mt-5">
-    <h1>Список клиентов</h1>
-    <a class="btn btn-primary" href="{% url 'client_form' %}">Добавить нового клиента</a>
-    <table class="table table-striped mt-3">
-        <thead>
+    <div class="d-flex align-items-center mb-3">
+        <h1 class="flex-grow-1">Список клиентов</h1>
+        <a href="{% url 'client_form' %}" class="btn btn-light ml-3" data-toggle="tooltip" data-placement="top" title="Добавить нового клиента">
+            <img src="{% static 'images/add_icon.png' %}" alt="Добавить нового клиента" style="width: 30px; height: 30px;">
+        </a>
+    </div>
+    <table class="table table-secondary table-hover">
+        <thead class="thead-dark">
             <tr>
                 <th>ID</th>
                 <th>Email</th>
@@ -23,8 +27,12 @@
                 <td>{{ client.comment }}</td>
                 <td>
                     <div class="btn-group" role="group">
-                        <a href="{% url 'client_update' client.pk %}" class="btn btn-primary">Редактировать</a>
-                        <a href="{% url 'client_delete' client.pk %}" class="btn btn-danger">Удалить</a>
+                        <a href="{% url 'client_update' client.pk %}" class="btn btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="Редактировать">
+                            <img src="{% static 'images/edit_icon.png' %}" alt="Редактировать" style="width: 20px; height: 20px;">
+                        </a>
+                        <a href="{% url 'client_delete' client.pk %}" class="btn btn-outline-dark" data-toggle="tooltip" data-placement="top" title="Удалить">
+                            <img src="{% static 'images/delete_icon.png' %}" alt="Удалить" style="width: 20px; height: 20px;">
+                        </a>
                     </div>
                 </td>
 
