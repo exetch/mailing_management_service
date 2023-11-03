@@ -1,6 +1,5 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.http import Http404
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView, DetailView
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -9,7 +8,6 @@ from .models import Mailing, Message
 from clients.models import Client
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.core.cache import cache
 
 
 class MailingListView(LoginRequiredMixin, ListView):
@@ -19,21 +17,10 @@ class MailingListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         user = self.request.user
-
-        cache_key = f'mailings_for_user_{user.id}'
-
-        cached_queryset = cache.get(cache_key)
-
-        if cached_queryset is not None:
-            return cached_queryset
+        if user.groups.filter(name='Менеджер').exists():
+            return super().get_queryset()
         else:
-            if user.groups.filter(name='Менеджер').exists():
-                queryset = super().get_queryset()
-            else:
-                queryset = super().get_queryset().filter(user=user)
-            cache.set(cache_key, queryset, 60)
-
-            return queryset
+            return super().get_queryset().filter(user=user)
 
 
 class MailingDetailView(LoginRequiredMixin, DetailView):
@@ -69,6 +56,13 @@ class MailingUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
     model = Mailing
     template_name = 'mailing/mailing_form.html'
     form_class = MailingForm
+
+    def form_valid(self, form):
+        mailing = form.save(commit=False)
+        if not mailing.user:
+            mailing.user = self.request.user
+        mailing.save()
+        return super().form_valid(form)
 
     def get_queryset(self):
         return super().get_queryset().filter(user=self.request.user)

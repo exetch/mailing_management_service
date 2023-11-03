@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from django.views.decorators.cache import cache_page
 
 urlpatterns = [
     path('mailings/', views.MailingListView.as_view(), name='mailing_list'),

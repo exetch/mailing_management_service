@@ -1,39 +1,51 @@
 {% extends 'mailing/base.html' %}
-
+{% load static %}
 {% block content %}
 <div class="container mt-5">
-    <h1>Выберите клиентов в эту рассылку</h1>
-    <a href="{% url 'client_form' %}?next={{ request.path }}" class="btn btn-primary">Добавить нового клиента</a>
-    <form method="get">
-        <input type="text" name="search" placeholder="Поиск...">
-        <button type="submit">Поиск</button>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">Выберите клиентов для рассылки</h1>
+        <a href="{% url 'client_form' %}?next={{ request.path }}" class="btn btn-light" data-toggle="tooltip" data-placement="top" title="Добавить нового клиента">
+            <img src="{% static 'images/add_icon.png' %}" alt="Добавить клиента" style="width: 30px; height: 30px;">
+        </a>
+    </div>
+
+    <form class="form-inline mb-3">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Поиск по клиентам..." aria-label="Поиск по клиентам">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="submit">Поиск</button>
+            </div>
+        </div>
     </form>
+
     <form method="post" action="{% url 'add_clients_to_mailing' mailing_id %}">
         {% csrf_token %}
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Email</th>
-                    <th>Клиент</th>
-                    <th>Выбрать</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for client in clients %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="thead-dark">
                     <tr>
-                        <td>{{ client.id }}</td>
-                        <td>{{ client.email }}</td>
-                        <td>{{ client.full_name }}</td>
-                        <td>
-                            <input type="checkbox" name="clients" value="{{ client.id }}"
-                                   {% if client in selected_clients %} checked {% endif %}>
-                        </td>
+                        <th scope="col">ID</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Клиент</th>
+                        <th scope="col">Выбрать</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <button type="submit" class="btn btn-primary">Сохранить рассылку</button>
+                </thead>
+                <tbody>
+                    {% for client in clients %}
+                        <tr>
+                            <th scope="row">{{ client.id }}</th>
+                            <td>{{ client.email }}</td>
+                            <td>{{ client.full_name }}</td>
+                            <td>
+                                <input class="form-check-input" type="checkbox" name="clients" value="{{ client.id }}"
+                                       {% if client in selected_clients %} checked {% endif %}>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Сохранить выбор</button>
     </form>
 </div>
 {% endblock %}

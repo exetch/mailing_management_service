@@ -2,6 +2,7 @@ from django.contrib.auth import login, authenticate, models
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
@@ -119,8 +120,14 @@ class UsersListView(PermissionRequiredMixin, ListView):
 
     def get_queryset(self):
         group = models.Group.objects.get(name='Обычный пользователь')
-
-        return CustomUser.objects.filter(groups=group)
+        query = self.request.GET.get('query', '')
+        if query:
+            return CustomUser.objects.filter(
+                Q(groups=group) &
+                (Q(first_name__icontains=query) | Q(email__icontains=query))
+            )
+        else:
+            return CustomUser.objects.filter(groups=group)
 
 
 def toggle_user_active_status(request, pk):

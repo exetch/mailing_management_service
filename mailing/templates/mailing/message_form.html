@@ -1,19 +1,25 @@
 {% extends 'mailing/base.html' %}
 
 {% block content %}
-<div class="row">
-    <div class="col">
-        {% if message %}
-            <h1>Редактировать сообщение</h1>
-        {% else %}
-            <h1>Добавить сообщение</h1>
-        {% endif %}
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Далее
-            </button>
-        </form>
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col text-center">
+            <h1>{% if object %}Обновить сообщение{% else %}Добавить сообщение{% endif %}</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <form method="post" class="card">
+                {% csrf_token %}
+                <div class="card-body">
+                    {{ form.as_p }}
+                </div>
+            <div class="card-footer text-right">
+                <button type="submit" class="btn btn-primary">Далее</button>
+            </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}
+
