@@ -15,6 +15,9 @@
         <thead class="thead-dark">
             <tr>
                 <th>ID</th>
+                {% if user|is_manager %}
+                    <th>Email пользователя</th>
+                {% endif %}
                 <th>Время рассылки</th>
                 <th>Периодичность</th>
                 <th>Статус</th>
@@ -25,6 +28,9 @@
             {% for mailing in mailings %}
             <tr>
                 <td>{{ mailing.id }}</td>
+                {% if user|is_manager %}
+                    <td>{{ mailing.user.email }}</td>
+                {% endif %}
                 <td>{{ mailing.send_time }}</td>
                 <td>{{ mailing.send_frequency }}</td>
                 <td>{{ mailing.status }}</td>
@@ -36,7 +42,7 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5">Нет доступных рассылок.</td>
+                <td colspan="6">Нет доступных рассылок.</td>
             </tr>
             {% endfor %}
         </tbody>
