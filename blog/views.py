@@ -26,7 +26,7 @@ class BlogPostListView(ListView):
         else:
             stats = {}
             if self.request.user.is_authenticated:
-                if self.request.user.groups.filter(name='Менеджер').exists():
+                if self.request.user.groups.filter(name='Менеджер').exists() or self.request.user.is_superuser:
                     stats['total_mailings'] = Mailing.objects.all().count()
                     stats['active_mailings'] = Mailing.objects.filter(status__in=['started', 'created']).count()
                     stats['unique_clients'] = Client.objects.values('email').distinct().count()
