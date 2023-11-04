@@ -37,9 +37,12 @@
                             <a class="nav-link" href="{% url 'clients_list' %}">Мои клиенты</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'log_list' %}">Посмотреть логи</a>
+                            <a class="nav-link" href="{% url 'log_list' %}">Логи рассылок</a>
                         </li>
                     {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile' user.pk %}">Профиль</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Выйти</a>
                 </li>

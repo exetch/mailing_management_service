@@ -17,10 +17,11 @@ class MailingListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         user = self.request.user
+        queryset = super().get_queryset().select_related('user')
         if user.groups.filter(name='Менеджер').exists():
-            return super().get_queryset()
+            return queryset
         else:
-            return super().get_queryset().filter(user=user)
+            return queryset.filter(user=user)
 
 
 class MailingDetailView(LoginRequiredMixin, DetailView):
